@@ -1,0 +1,57 @@
+
+
+-- Создание таблицы музыкантов
+CREATE TABLE Musicians (
+    musician_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR NOT NULL,
+    role VARCHAR NOT NULL, -- Например, "исполнитель", "композитор", "дирижер"
+    instrument VARCHAR, -- Инструмент, на котором играет музыкант (если применимо)
+    ensemble_id INTEGER,
+    FOREIGN KEY (ensemble_id) REFERENCES Ensembles(ensemble_id)
+);
+
+-- Создание таблицы ансамблей
+CREATE TABLE Ensembles (
+    ensemble_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR NOT NULL,
+    type VARCHAR NOT NULL -- Например, "оркестр", "квартет", "квинтет"
+);
+
+-- Создание таблицы музыкальных произведений
+CREATE TABLE MusicalWorks (
+    work_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title VARCHAR NOT NULL,
+    composer_id INTEGER,
+    FOREIGN KEY (composer_id) REFERENCES Musicians(musician_id)
+);
+
+-- Создание таблицы записей исполнений
+CREATE TABLE Recordings (
+    recording_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    work_id INTEGER NOT NULL,
+    musician_id INTEGER NOT NULL,
+    performance_date DATE, -- Дата исполнения
+    FOREIGN KEY (work_id) REFERENCES MusicalWorks(work_id),
+    FOREIGN KEY (musician_id) REFERENCES Musicians(musician_id)
+);
+
+-- Создание таблицы пластинок
+CREATE TABLE Records (
+    record_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    label_number VARCHAR NOT NULL UNIQUE, -- Номер наклейки
+    release_date DATE NOT NULL, -- Дата выпуска
+    wholesale_price REAL NOT NULL, -- Оптовая цена
+    retail_price REAL NOT NULL, -- Розничная цена
+    sold_last_year INTEGER NOT NULL DEFAULT 0, -- Продано за прошлый год
+    sold_this_year INTEGER NOT NULL DEFAULT 0, -- Продано за текущий год
+    unsold INTEGER NOT NULL DEFAULT 0 -- Не распроданные экземпляры
+);
+
+-- Создание таблицы связей между записями и произведениями
+CREATE TABLE RecordingsRecords (
+    recording_id INTEGER,
+    record_id INTEGER,
+    PRIMARY KEY (recording_id, record_id),
+    FOREIGN KEY (recording_id) REFERENCES Recordings(recording_id),
+    FOREIGN KEY (record_id) REFERENCES Records(record_id)
+);
